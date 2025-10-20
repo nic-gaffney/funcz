@@ -40,6 +40,10 @@ pub fn mapAlloc(
     if(itemsTypeInfo != .array and itemsTypeInfo != .pointer) {
         @compileError("Expected array or slice, found " ++ @typeName(itemsType));
     }
+    switch (itemsTypeInfo) {
+        .pointer => |p| if(p.size != .many and p.size != .slice) @compileError("Expected pointer of size 'many' or 'slice', found " ++ @tagName(p)),
+        else =>{},
+    }
 
     break :blk []funcTypeInfo.@"fn".return_type.?;
 } {
@@ -68,6 +72,10 @@ pub fn map(
         @compileError("Expected array, found " ++ @typeName(itemsType));
     if(bufferTypeInfo != .array and bufferTypeInfo != .pointer)
         @compileError("Expected array, found " ++ @typeName(bufferType));
+    switch (itemsTypeInfo) {
+        .pointer => |p| if(p.size != .many and p.size != .slice) @compileError("Expected pointer of size 'many' or 'slice', found '" ++ @tagName(p.size) ++ "'"),
+        else =>{},
+    }
     for (items, 0..) |item, i|
         buffer.*[i] = func(item);
 }
