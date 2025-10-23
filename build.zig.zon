@@ -1,6 +1,6 @@
 .{
     .name = .funcz,
     .fingerprint = 0x30f8633228105f1a,
-    .version = "0.0.1",
+    .version = "0.1.0",
     .paths = .{ "src" },
 }
