@@ -2,5 +2,5 @@
     .name = .funcz,
     .fingerprint = 0x30f8633228105f1a,
     .version = "0.1.2",
-    .paths = .{ "src" },
+    .paths = .{ "src", "build.zig", "build.zig.zon" },
 }
