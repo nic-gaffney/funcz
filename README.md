@@ -7,3 +7,12 @@ To add the latest version to your project, simply run
 ```
 $ zig fetch --save git+https://git.ngaffney.dev/funcz/#HEAD
 ```
+
+And then in your `build.zig`, add the following:
+```zig
+const funczmod = b.dependency("funcz", .{
+    .target = target,
+    .optimize = optimize,
+}).module("funcz");
+exe.root_module.addImport("funcz", funczmod);
+```
