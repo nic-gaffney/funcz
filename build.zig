@@ -4,16 +4,13 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{.preferred_optimize_mode = .ReleaseSmall });
 
-    const dep_opts = .{ .target = target, .optimize = optimize };
-    _=dep_opts;
-
-    const rootmod =b.addModule("funcz", .{
+    _=b.addModule("funcz", .{
         .root_source_file = b.path("src/root.zig"),
         .optimize = optimize,
         .target = target,
     });
-    const options = b.addOptions();
-    rootmod.addOptions("build", options);
+    // const options = b.addOptions();
+    // rootmod.addOptions("build", options);
 
     // const lib = b.addLibrary(.{
     //     .name = "funcz",
