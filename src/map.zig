@@ -13,20 +13,9 @@ pub fn map(
     items: []typeVerify(@TypeOf(func), .{ .@"fn" }).@"fn".params[0].type.?,
     buffer: *[]typeVerify(@TypeOf(func), .{ .@"fn" }).@"fn".return_type.?,
 ) void {
-    _=typeVerify(@TypeOf(func), .{ .@"fn" });
-    // const itemsInfo = typeVerify(@TypeOf(items), .{ .pointer, .array });
-    // const bufferInfo = typeVerify(@TypeOf(buffer), .{ .pointer });
-    // const bufferChildInfo = typeVerify(bufferInfo.pointer.child, .{ .pointer, .array });
-    // switch (itemsInfo) {
-    //     .pointer => |p| if(p.size != .many and p.size != .slice)
-    //         @compileError("Expected pointer of size 'many' or 'slice', found '" ++ @tagName(p.size) ++ "'"),
-    //     else =>{},
-    // }
-    // switch (bufferChildInfo) {
-    //     .pointer => |p| if(p.size != .many and p.size != .slice)
-    //         @compileError("Expected pointer of size 'many' or 'slice', found '" ++ @tagName(p.size) ++ "'"),
-    //     else =>{},
-    // }
+    const fInfo =typeVerify(@TypeOf(func), .{ .@"fn" }).@"fn";
+    if(fInfo.params.len > 1)
+        @compileError("Function passed into map must have exactly one argument");
     for (items, 0..) |item, i|
         buffer.*[i] = func(item);
 }
@@ -35,6 +24,7 @@ pub fn map(
 /// (fn (Allocator, fn (fn (a) b, []a) error{OutOfMemory}![]b)
 /// ```
 /// Map a function onto a list of values, allocating space for the new slice
+/// The return value of this function must be freed using `allocator.free()`
 /// Type signature: `(a -> b) -> [a] -> [b]`
 /// `func` is of type `a -> b`, where `items` is of type `[a]`.
 /// `map` will return a slice of type `[b]`
@@ -42,16 +32,9 @@ pub fn map(
 pub fn mapAlloc(
     allocator: std.mem.Allocator,
     func: anytype,
-    items: anytype,
+    items: []typeVerify(@TypeOf(func), .{ .@"fn" }).@"fn".params[0].type.?,
 ) error{OutOfMemory}!blk:{
     const funcInfo = typeVerify(@TypeOf(func), .{ .@"fn" });
-    const itemsInfo = typeVerify(@TypeOf(items), .{ .array, .pointer });
-    switch (itemsInfo) {
-        .pointer => |p| if(p.size != .many and p.size != .slice)
-            @compileError("Expected pointer of size 'many' or 'slice', found " ++ @tagName(p)),
-        else =>{},
-    }
-
     break :blk []funcInfo.@"fn".return_type.?;
 } {
     const funcInfo = typeVerify(@TypeOf(func), .{ .@"fn" });

@@ -29,6 +29,9 @@ pub fn build(b: *std.Build) !void {
 
     b.installArtifact(exe);
 
+    const ir_file = b.addInstallFile(exe.getEmittedLlvmIr(), "output.ll");
+    b.getInstallStep().dependOn(&ir_file.step);
+
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| run_cmd.addArgs(args);
